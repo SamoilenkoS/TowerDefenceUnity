@@ -4,31 +4,37 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Enemy : MonoBehaviour {
-    public float speed = 10f;
-    private Transform target;
-    private int waypointIndex = 0;
+    public float startSpeed = 10f;
+    [HideInInspector]
+    public float speed;
+
+    public float health = 100;
+    public int worth = 50;
+    
+    public GameObject deathEffect;
+
     void Start()
     {
-        target = Waypoints.waypoints[0];
+        speed = startSpeed;
     }
-    void Update()
+    public void TakeDamage(float amount)
     {
-        Vector3 direction = target.position - transform.position;
-        transform.Translate(direction.normalized * speed * Time.deltaTime, Space.World);
-        if(Vector3.Distance(transform.position,target.position) <= 0.4f)
+        health -= amount;
+        if (health <= 0)
         {
-            GetNextWaypoint();
+            Die();
         }
     }
 
-    private void GetNextWaypoint()
+    private void Die()
     {
-        if (waypointIndex == Waypoints.waypoints.Length - 1)
-        {
-            Destroy(gameObject);
-            return;
-        }
-        ++waypointIndex;
-        target = Waypoints.waypoints[waypointIndex];
+        PlayerStats.Money += worth;
+        GameObject dieEffect = Instantiate(deathEffect, transform.position, Quaternion.identity);
+        Destroy(dieEffect, 5f);
+        Destroy(gameObject);
+    }
+    public void Slow(float slowAmount)
+    {
+        speed = startSpeed * (1f - slowAmount);
     }
 }
