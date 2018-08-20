@@ -1,17 +1,17 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
     public GameObject gameOverUI;
     public static bool GameIsOver;
-    void Start()
+
+    #region Unity methods
+    private void Start()
     {
         GameIsOver = false;
     }
-	void Update ()
+
+	private void Update ()
     {
         if(GameIsOver)
         {
@@ -22,6 +22,8 @@ public class GameManager : MonoBehaviour
             EndGame();
         }
 	}
+
+    #endregion
 
     private void EndGame()
     {

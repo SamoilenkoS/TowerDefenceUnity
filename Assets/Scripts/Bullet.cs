@@ -1,28 +1,24 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
     private Transform target;
-    public float speed = 70f;
+
+    #region Public fields
     public int damage = 20;
+    public float speed = 70f;
     public float explosionRadius = 0f;
     public GameObject impactEffect;
-    public void Seek(Transform _target)
+
+    #endregion
+
+    #region Private Methods
+
+    #region Unity methods
+    private void Update()
     {
-        target = _target;
-    }
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		if(target==null)
+        if (target == null)
         {
             Destroy(gameObject);
             return;
@@ -37,6 +33,14 @@ public class Bullet : MonoBehaviour
         transform.Translate(direction.normalized * distanceThisFrame, Space.World);
         transform.LookAt(target);
     }
+
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, explosionRadius);
+    }
+
+    #endregion
 
     private void HitTarget()
     {
@@ -64,7 +68,7 @@ public class Bullet : MonoBehaviour
         }
     }
 
-    void Damage(Transform enemyGO)
+    private void Damage(Transform enemyGO)
     {
         Enemy enemy = enemyGO.GetComponent<Enemy>();
         if(enemy != null)
@@ -72,9 +76,11 @@ public class Bullet : MonoBehaviour
             enemy.TakeDamage(damage);
         }
     }
-    void OnDrawGizmosSelected()
+
+    #endregion
+
+    public void SetTarget(Transform target)
     {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, explosionRadius);
+        this.target = target;
     }
 }

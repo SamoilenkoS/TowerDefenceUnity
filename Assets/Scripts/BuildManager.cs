@@ -1,20 +1,22 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class BuildManager : MonoBehaviour {
+public class BuildManager : MonoBehaviour
+{
+    #region Private fields
     private TurretBlueprint turretToBuild;
-    public static BuildManager Instance;
-    void Awake()
-    {
-        if (Instance != null)
-        {
-            return;
-        }
-        Instance = this;
-    }
+    private Node selectedNode;
+
+    #endregion
+
+    #region Public fields
+    public NodeUI nodeUI;
     public GameObject buildEffect;
+    
+    #endregion
+
+    public static BuildManager Instance;//Singleton
+
+    #region Properties
     public bool CanBuild
     {
         get
@@ -29,20 +31,58 @@ public class BuildManager : MonoBehaviour {
             return PlayerStats.Money >= turretToBuild.cost;
         }
     }
-    public void SelectTurretToBuild(TurretBlueprint turret)
+
+    #endregion
+
+    #region Unity methods
+    private void Awake()
     {
-        turretToBuild = turret;
-    }
-    public void BuildTurretOn(Node node)
-    {
-        if(PlayerStats.Money < turretToBuild.cost)
+        if (Instance != null)
         {
             return;
         }
-        PlayerStats.Money -= turretToBuild.cost;
-        GameObject buildEffectGameObject = Instantiate(buildEffect, node.GetBuildPosition(), Quaternion.identity);
-        Destroy(buildEffectGameObject, 5f);
-        GameObject turretGameObject = Instantiate(turretToBuild.prefab, node.GetBuildPosition(), Quaternion.identity);
-        node.turretGameObject = turretGameObject;
+        Instance = this;
     }
+
+    #endregion
+
+    #region Public methods
+
+    #region Work with Turret
+    public TurretBlueprint GetTurretToBuild()
+    {
+        return turretToBuild;
+    }
+
+    public void SelectTurretToBuild(TurretBlueprint turret)
+    {
+        turretToBuild = turret;
+        DeselectNode();
+    }
+
+    #endregion
+
+    #region Work with Node
+    public void SelectNode(Node node)
+    {
+        if (selectedNode == node)
+        {
+            DeselectNode();
+            return;
+        }
+        selectedNode = node;
+        turretToBuild = null;
+        nodeUI.SetTarget(node);
+    }
+
+    public void DeselectNode()
+    {
+        selectedNode = null;
+        nodeUI.Hide();
+    }
+
+    #endregion
+
+    #endregion
+
 }

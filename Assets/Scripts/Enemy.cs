@@ -1,29 +1,22 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class Enemy : MonoBehaviour {
+public class Enemy : MonoBehaviour
+{
+    #region Public fields
     public float startSpeed = 10f;
     [HideInInspector]
     public float speed;
 
     public float health = 100;
     public int worth = 50;
-    
     public GameObject deathEffect;
 
-    void Start()
+    #endregion
+
+    #region Private methods
+    private void Start()
     {
         speed = startSpeed;
-    }
-    public void TakeDamage(float amount)
-    {
-        health -= amount;
-        if (health <= 0)
-        {
-            Die();
-        }
     }
 
     private void Die()
@@ -33,8 +26,24 @@ public class Enemy : MonoBehaviour {
         Destroy(dieEffect, 5f);
         Destroy(gameObject);
     }
+
+    #endregion
+
+    #region Public methods
     public void Slow(float slowAmount)
     {
         speed = startSpeed * (1f - slowAmount);
     }
+
+    public void TakeDamage(float amount)
+    {
+        health -= amount;
+        if (health <= 0)
+        {
+            Die();
+        }
+    }
+
+    #endregion
+
 }

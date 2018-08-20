@@ -1,18 +1,25 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 [RequireComponent(typeof(Enemy))]
-public class EnemyMovement : MonoBehaviour {
+public class EnemyMovement : MonoBehaviour
+{
+    #region Private fields
     private Transform target;
     private int waypointIndex = 0;
     private Enemy enemy;
-    void Start()
+
+    #endregion
+
+    #region Private methods
+
+    #region Unity methods
+    private void Start()
     {
         enemy = GetComponent<Enemy>();
         target = Waypoints.waypoints[0];
     }
-    void Update()
+
+    private void Update()
     {
         Vector3 direction = target.position - transform.position;
         transform.Translate(direction.normalized * enemy.speed * Time.deltaTime, Space.World);
@@ -22,6 +29,8 @@ public class EnemyMovement : MonoBehaviour {
         }
         enemy.speed = enemy.startSpeed;
     }
+
+    #endregion
 
     private void GetNextWaypoint()
     {
@@ -33,9 +42,13 @@ public class EnemyMovement : MonoBehaviour {
         ++waypointIndex;
         target = Waypoints.waypoints[waypointIndex];
     }
+
     private void EndPath()
     {
         --PlayerStats.Lives;
         Destroy(gameObject);
     }
+
+    #endregion
+
 }

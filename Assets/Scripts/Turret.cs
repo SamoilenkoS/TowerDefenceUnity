@@ -1,13 +1,15 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Turret : MonoBehaviour
 {
+
+    #region Private fields
     private Transform target;
     private Enemy targetEnemy;
 
+    #endregion
+
+    #region Public fields
     [Header("General")]
     public float range = 15f;
 
@@ -30,13 +32,57 @@ public class Turret : MonoBehaviour
     public float turnSpeed = 10f;
 
     public Transform firePoint;
-    // Use this for initialization
-    void Start ()
+
+    #endregion
+
+    #region Private methods
+
+    #region Unity methods
+    private void Start ()
     {
         InvokeRepeating("UpdateTarget", 0f, 0.5f);
 	}
-	
-    void UpdateTarget()
+
+    private void Update()
+    {
+        if (target == null)
+        {
+            if (useLaser)
+            {
+                if (lineRenderer.enabled)
+                {
+                    lineRenderer.enabled = false;
+                    impactEffect.Stop();
+                    impactLight.enabled = false;
+                }
+            }
+            return;
+        }
+        LockOnTarget();
+        if (useLaser)
+        {
+            Laser();
+        }
+        else
+        {
+            if (fireCountdown <= 0f)
+            {
+                Shoot();
+                fireCountdown = 1f / fireRate;
+            }
+            fireCountdown -= Time.deltaTime;
+        }
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, range);
+    }
+
+    #endregion
+
+    private void UpdateTarget()
     {
         GameObject[] enemies = GameObject.FindGameObjectsWithTag(enemyTag);
         float shortestDistance = Mathf.Infinity;
@@ -60,37 +106,6 @@ public class Turret : MonoBehaviour
             target = null;
         }
     }
-	// Update is called once per frame
-	void Update ()
-    {
-        if (target == null)
-        {
-            if(useLaser)
-            {
-                if(lineRenderer.enabled)
-                {
-                    lineRenderer.enabled = false;
-                    impactEffect.Stop();
-                    impactLight.enabled = false;
-                }
-            }
-            return;
-        }
-        LockOnTarget();
-        if(useLaser)
-        {
-            Laser();
-        }
-        else
-        {
-            if (fireCountdown <= 0f)
-            {
-                Shoot();
-                fireCountdown = 1f / fireRate;
-            }
-            fireCountdown -= Time.deltaTime;
-        }
-	}
 
     private void Laser()
     {
@@ -123,13 +138,10 @@ public class Turret : MonoBehaviour
         Bullet bullet = bulletGO.GetComponent<Bullet>();
         if (bullet != null)
         {
-            bullet.Seek(target);
+            bullet.SetTarget(target);
         }
     }
 
-    void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, range);
-    }
+    #endregion
+
 }

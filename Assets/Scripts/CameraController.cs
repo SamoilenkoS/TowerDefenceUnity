@@ -1,22 +1,20 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class CameraController : MonoBehaviour {
+﻿using UnityEngine;
+//TODO Add borders to axis X and Z
+//TODO Make to methods from Update
+public class CameraController : MonoBehaviour
+{
     private bool doMovement = true;
+
+    #region Public fields
     public float panSpeed = 30f;
     public float panBorderThickness = 10f;
     public float scrollSpeed = 5f;
     public float minY = 10f;
     public float maxY = 80f;
-	// Use this for initialization
-	void Start ()
-    {
-		
-	}
+
+    #endregion
 	
-	// Update is called once per frame
-	void Update ()
+	private void Update ()
     {
         if(GameManager.GameIsOver)
         {
